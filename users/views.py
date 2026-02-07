@@ -4,6 +4,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 from .serializers import RegisterSerializer, LoginSerializer
 
@@ -32,3 +34,12 @@ class LoginView(APIView):
                 return Response({'token': token.key})
             else:
                 return Response({'error': 'invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+
+class ProfileView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request: Request) -> Response:
+        user = request.user
+        return Response({'message': f'{user.username} profile'})
+    
